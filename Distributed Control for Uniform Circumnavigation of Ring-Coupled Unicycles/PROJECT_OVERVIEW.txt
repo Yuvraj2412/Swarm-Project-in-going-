@@ -1,0 +1,240 @@
+================================================================================
+  DISTRIBUTED CIRCUMNAVIGATION - MATLAB IMPLEMENTATION
+  Based on: Zheng et al., Automatica 53 (2015) 23-29
+================================================================================
+
+PROJECT STRUCTURE:
+==================
+
+circumnavigation_simulation/
+│
+├── 📄 QUICK_START.m               ← START HERE! Quick guide & examples
+├── 📄 README.md                   ← Full documentation
+│
+├── 🔧 MAIN FILES:
+│   ├── main_circumnavigation.m    ← Main simulation script
+│   ├── unicycle_dynamics.m        ← System dynamics function
+│   └── animate_circumnavigation.m ← Animation function
+│
+├── 📘 EXAMPLES:
+│   ├── example_same_radius.m      ← All agents on same orbit
+│   └── example_different_radii.m  ← Agents on different orbits (Table 1)
+│
+└── 🛠️ UTILITIES:
+    └── check_parameters.m         ← Parameter validator
+
+
+GETTING STARTED:
+================
+
+OPTION 1 - Simplest (just run it!):
+   >> main_circumnavigation
+
+OPTION 2 - Run an example:
+   >> example_same_radius
+   or
+   >> example_different_radii
+
+OPTION 3 - Customize parameters:
+   1. Open main_circumnavigation.m
+   2. Edit parameters in lines 15-40
+   3. Run: >> main_circumnavigation
+
+
+WHAT EACH FILE DOES:
+====================
+
+📄 main_circumnavigation.m
+   • Main simulation script
+   • Configure ALL parameters here
+   • Runs simulation and shows animation
+   • This is where you'll spend most time
+
+📄 unicycle_dynamics.m
+   • Implements control law from Equation (2)
+   • Called by ODE solver
+   • No need to modify
+
+📄 animate_circumnavigation.m
+   • Creates real-time animation
+   • Shows agents, trajectories, and target
+   • Auto-called by main script
+   • No need to modify
+
+📄 example_same_radius.m
+   • Example: 8 agents on same orbit
+   • Demonstrates uniform spacing
+   • Can run independently
+
+📄 example_different_radii.m
+   • Example: 6 agents on two orbits
+   • Replicates Table 1 from paper
+   • Shows detailed metrics
+   • Can run independently
+
+📄 check_parameters.m
+   • Validates your parameter choices
+   • Checks stability conditions
+   • Use before running simulation
+   • Usage: check_parameters(N, d, radii, kv, kw)
+
+
+KEY PARAMETERS TO MODIFY:
+==========================
+
+In main_circumnavigation.m, look for these:
+
+N = 6                          % Number of agents
+radii = [2, 2, 2, 3, 3, 3]    % Radius for each agent
+d = 1                          % Formation parameter
+target_pos = [0, 0]            % Target location
+t_final = 30                   % Simulation time
+
+
+PARAMETER GUIDE:
+================
+
+N (Number of agents)
+   • Must be ≥ 3
+   • More agents = slower simulation
+   • Examples: 4, 6, 8, 10
+
+radii (Desired radius for each agent)
+   • Vector of length N
+   • All positive numbers
+   • Examples:
+     - All same: [2, 2, 2, 2]
+     - Different: [1.5, 2, 2.5, 3]
+
+d (Formation parameter)
+   • Controls angular spacing
+   • Range: 1 to N-1
+   • d = 1: clockwise (MOST STABLE)
+   • d = N-1: counterclockwise (MOST STABLE)
+   • Other values: intermediate (less stable)
+
+target_pos ([x, y])
+   • Target location coordinates
+   • Examples: [0, 0], [5, 3], [-2, 4]
+
+t_final (Simulation time)
+   • In seconds
+   • Increase if not converged
+   • Typical: 20-40 seconds
+
+
+WORKFLOW:
+=========
+
+1. DESIGN
+   ✓ Decide: How many agents? (N)
+   ✓ Choose: What orbit radii? (radii)
+   ✓ Pick: What formation? (d)
+
+2. VALIDATE
+   ✓ Run: check_parameters(N, d, radii, kv, kw)
+   ✓ Verify: stability confirmed?
+
+3. SIMULATE
+   ✓ Set parameters in main_circumnavigation.m
+   ✓ Run: main_circumnavigation
+   ✓ Watch: animation
+
+4. ANALYZE
+   ✓ Check: Did agents reach desired orbits?
+   ✓ Verify: Uniform spacing achieved?
+   ✓ Adjust: If needed, tweak t_final or d
+
+
+COMMON USE CASES:
+=================
+
+Case 1: "I want 6 agents on the same circular orbit"
+   N = 6
+   radii = 3 * ones(1, 6)
+   d = 1
+
+Case 2: "I want 3 agents on r=2 and 3 on r=4"
+   N = 6
+   radii = [2, 2, 2, 4, 4, 4]
+   d = 1
+
+Case 3: "I want to replicate the paper's example"
+   Run: example_different_radii
+
+Case 4: "I want to check if my parameters work"
+   check_parameters(N, d, radii, kv, kw)
+
+
+TROUBLESHOOTING:
+================
+
+Problem: "Length of radii must equal N"
+   → radii must be a vector of length N
+   → Example: N=5 needs radii=[r1, r2, r3, r4, r5]
+
+Problem: Agents don't converge
+   → Increase t_final
+   → Try d=1 instead
+   → Check with: check_parameters(...)
+
+Problem: Animation is laggy
+   → Set animate_realtime = false
+   → Or increase animation_speed
+
+Problem: Warning about stability
+   → Use d=1 or d=N-1 for guaranteed stability
+
+
+THEORY REFERENCE:
+=================
+
+Control Law (Equation 2):
+   [vᵢ; ωᵢ] = [kᵥ 0; 0 kωδᵢ] × [(1-aᵢ)μ₊ + aᵢμᵦ]
+
+Where:
+   • vᵢ, ωᵢ: linear & angular velocities
+   • μ₊: relative position of next agent
+   • μᵦ: relative position of target
+   • δᵢ = 1/rᵢ
+   • aᵢ = 1 - c(rᵢ/rᵢ₊₁)
+
+Stability (Theorem 5):
+   • d = 1 or N-1 → Stable with c = 1-ε
+   • Other d values may not be stable
+
+
+MATLAB VERSION:
+===============
+
+Tested on: R2020b and later
+Required Toolboxes: None (base MATLAB only)
+
+
+FURTHER HELP:
+=============
+
+1. Read README.md for complete documentation
+2. Check QUICK_START.m for examples
+3. Run check_parameters() to validate settings
+4. Refer to original paper for theory
+
+
+CITATION:
+=========
+
+@article{zheng2015distributed,
+  title={Distributed control for uniform circumnavigation of 
+         ring-coupled unicycles},
+  author={Zheng, Ronghao and Lin, Zhiyun and Fu, Minyue and Sun, Dong},
+  journal={Automatica},
+  volume={53},
+  pages={23--29},
+  year={2015}
+}
+
+
+================================================================================
+Last updated: February 2026
+Happy Simulating! 🚁
+================================================================================
