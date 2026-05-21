@@ -1,1 +1,1 @@
-
+These are some of the projects which we started but couldn't make it to completion cause of technical or time management difficluties but if someone is interested to help me with the process of reviving them and helping to make them good and solving the limitations, i am ready-t0-help, feel free to mail me
